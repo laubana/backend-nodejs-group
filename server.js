@@ -15,7 +15,7 @@ mongoose.connection.on("error", () => {
 });
 
 mongoose.connection.once("open", () => {
-  app.listen(3500, () => {
-    console.log("Server started.");
+  app.listen(process.env.PORT, () => {
+    console.log(`PORT : ${process.env.PORT}`);
   });
 });

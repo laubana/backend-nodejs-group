@@ -5,6 +5,7 @@ const groupSchema = new mongoose.Schema(
   {
     category: { type: ObjectId, ref: "category", required: true },
     user: { type: ObjectId, ref: "user", required: true },
+    thumbnailUrl: { type: String, required: true },
     imageUrl: { type: String, required: true },
     name: { type: String, required: true, unique: true },
     address: { type: String, required: true },

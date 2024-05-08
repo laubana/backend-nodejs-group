@@ -38,6 +38,7 @@ const addGroup = async (req, res) => {
     const {
       categoryId,
       userId,
+      thumbnailUrl,
       imageUrl,
       name,
       address,
@@ -62,6 +63,7 @@ const addGroup = async (req, res) => {
     const newGroup = await Group.create({
       category: categoryId,
       user: userId,
+      thumbnailUrl,
       imageUrl,
       name,
       address,
