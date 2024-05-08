@@ -2,9 +2,32 @@ const Group = require("../model/Group");
 
 const getAllGroups = async (req, res) => {
   try {
-    const groups = await Group.find().lean();
+    const groups = await Group.find()
+      .populate({
+        path: "category",
+      })
+      .lean();
 
     res.status(200).json(groups);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getGroup = async (req, res) => {
+  try {
+    const { groupId } = req.query;
+
+    const group = await Group.findOne({ _id: groupId })
+      .populate({
+        path: "category",
+      })
+      .populate({
+        path: "user",
+      })
+      .lean();
+
+    res.status(200).json(group);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -36,8 +59,6 @@ const addGroup = async (req, res) => {
       });
     }
 
-    console.log(group);
-
     const newGroup = await Group.create({
       category: categoryId,
       user: userId,
@@ -57,5 +78,6 @@ const addGroup = async (req, res) => {
 
 module.exports = {
   getAllGroups,
+  getGroup,
   addGroup,
 };
