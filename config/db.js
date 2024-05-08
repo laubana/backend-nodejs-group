@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const run = async () => {
+const db = async () => {
   try {
     await mongoose.connect(process.env.DATABASE_URI);
   } catch (err) {
@@ -9,4 +9,4 @@ const run = async () => {
   }
 };
 
-module.exports = { run };
+module.exports = { db };
