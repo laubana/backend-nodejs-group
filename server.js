@@ -9,6 +9,7 @@ app.use(express.json());
 app.use("/auth", require("./route/auth"));
 app.use("/api", require("./route/category"));
 app.use("/api", require("./route/group"));
+app.use("/api", require("./route/registration"));
 
 mongoose.connection.on("error", () => {
   console.log("Failed to connect to DB.");

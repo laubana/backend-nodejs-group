@@ -66,6 +66,7 @@ const signIn = async (req, res) => {
 
     const accessToken = jsonwebtoken.sign(
       {
+        id: user.id,
         email: user.email,
       },
       process.env.ACCESS_TOKEN_SECRET,
@@ -73,7 +74,7 @@ const signIn = async (req, res) => {
     );
 
     const refreshToken = jsonwebtoken.sign(
-      { email: user.email },
+      { id: user.id, email: user.email },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "7d" }
     );
@@ -86,6 +87,7 @@ const signIn = async (req, res) => {
 
     res.json({
       accessToken,
+      id: user.id,
       email,
     });
   } catch (error) {
@@ -118,6 +120,7 @@ const refresh = (req, res) => {
 
         const accessToken = jsonwebtoken.sign(
           {
+            id: user.id,
             email: user.email,
           },
           process.env.ACCESS_TOKEN_SECRET,
@@ -126,6 +129,7 @@ const refresh = (req, res) => {
 
         res.json({
           accessToken,
+          id: user._id,
           email: user.email,
         });
       }

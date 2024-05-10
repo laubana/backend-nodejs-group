@@ -6,7 +6,8 @@ const getAllGroups = async (req, res) => {
       .populate({
         path: "category",
       })
-      .lean();
+      .lean()
+      .exec();
 
     res.status(200).json(groups);
   } catch (error) {
@@ -25,7 +26,8 @@ const getGroup = async (req, res) => {
       .populate({
         path: "user",
       })
-      .lean();
+      .lean()
+      .exec();
 
     res.status(200).json(group);
   } catch (error) {
