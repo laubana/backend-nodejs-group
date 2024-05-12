@@ -8,6 +8,7 @@ app.use(cors(require("./config/cors").cors));
 app.use(express.json());
 app.use("/auth", require("./route/auth"));
 app.use("/api", require("./route/category"));
+app.use("/api", require("./route/comment"));
 app.use("/api", require("./route/group"));
 app.use("/api", require("./route/registration"));
 
