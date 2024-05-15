@@ -10,6 +10,7 @@ app.use("/auth", require("./route/auth"));
 app.use("/api", require("./route/category"));
 app.use("/api", require("./route/comment"));
 app.use("/api", require("./route/group"));
+app.use("/api", require("./route/image"));
 app.use("/api", require("./route/registration"));
 
 mongoose.connection.on("error", () => {

@@ -4,9 +4,9 @@ const controller = require("../controller/comment");
 
 const verifyToken = require("../middleware/verifyToken");
 
-router.route("/comments/group").get(controller.getCommentsGroup);
+router.route("/comments").get(controller.getComments);
 
-router.route("/comment/user").delete(verifyToken, controller.deleteCommentUser);
 router.route("/comment").post(verifyToken, controller.addComment);
+router.route("/comment").delete(verifyToken, controller.deleteComment);
 
 module.exports = router;

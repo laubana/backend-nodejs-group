@@ -23,7 +23,7 @@ const getRegistrationsGroup = async (req, res) => {
   }
 };
 
-const getRegistrationGroupUser = async (req, res) => {
+const getRegistration = async (req, res) => {
   try {
     const { groupId } = req.query;
     const userId = req.id;
@@ -86,17 +86,17 @@ const addRegistration = async (req, res) => {
   }
 };
 
-const deleteRegistrationGroupUser = async (req, res) => {
+const deleteRegistration = async (req, res) => {
   try {
-    const { groupId } = req.body;
+    const { registrationId } = req.body;
     const userId = req.id;
 
-    if (!groupId || !userId) {
+    if (!registrationId || !userId) {
       return res.status(400).json({ message: "Please provide all fields" });
     }
 
     const result = await Registration.deleteMany({
-      group: groupId,
+      _id: registrationId,
       user: userId,
     })
       .lean()
@@ -111,7 +111,7 @@ const deleteRegistrationGroupUser = async (req, res) => {
 
 module.exports = {
   getRegistrationsGroup,
-  getRegistrationGroupUser,
+  getRegistration,
   addRegistration,
-  deleteRegistrationGroupUser,
+  deleteRegistration,
 };

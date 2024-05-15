@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
-const Comment = require("../model/Comment");
+const Image = require("../model/Image");
 
-const getComments = async (req, res) => {
+const getImages = async (req, res) => {
   try {
     const { groupId } = req.query;
 
-    const comments = await Comment.find({
+    const images = await Image.find({
       group: groupId,
     })
       .populate({
@@ -18,45 +18,45 @@ const getComments = async (req, res) => {
       .lean()
       .exec();
 
-    res.status(200).json(comments);
+    res.status(200).json(images);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-const addComment = async (req, res) => {
+const addImage = async (req, res) => {
   try {
-    const { groupId, value } = req.body;
+    const { groupId, imageUrl } = req.body;
     const userId = req.id;
 
-    if (!groupId || !value | !userId) {
+    if (!groupId || !imageUrl | !userId) {
       return res.status(400).json({ message: "Please provide all fields" });
     }
 
-    const newComment = await Comment.create({
+    const newImage = await Image.create({
       group: groupId,
       user: userId,
-      value,
+      imageUrl,
     });
 
-    res.status(201).json(newComment);
+    res.status(201).json(newImage);
   } catch (error) {
     console.log(error);
     res.status(500);
   }
 };
 
-const deleteComment = async (req, res) => {
+const deleteImage = async (req, res) => {
   try {
-    const { commentId } = req.body;
+    const { commentId: imageId } = req.body;
     const userId = req.id;
 
-    if (!commentId || !userId) {
+    if (!imageId || !userId) {
       return res.status(400).json({ message: "Please provide all fields" });
     }
 
-    const result = await Comment.deleteOne({
-      _id: commentId,
+    const result = await Image.deleteOne({
+      _id: imageId,
       user: userId,
     })
       .lean()
@@ -69,8 +69,4 @@ const deleteComment = async (req, res) => {
   }
 };
 
-module.exports = {
-  getComments,
-  addComment,
-  deleteComment,
-};
+module.exports = { getImages, addImage, deleteImage };
