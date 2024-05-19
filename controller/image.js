@@ -1,15 +1,14 @@
-const mongoose = require("mongoose");
 const Image = require("../model/Image");
 
 const getImages = async (req, res) => {
   try {
-    const { groupId } = req.query;
+    const { eventId } = req.query;
 
     const images = await Image.find({
-      group: groupId,
+      event: eventId,
     })
       .populate({
-        path: "group",
+        path: "event",
       })
       .populate({
         path: "user",
@@ -18,41 +17,46 @@ const getImages = async (req, res) => {
       .lean()
       .exec();
 
-    res.status(200).json(images);
+    res.status(200).json({ message: "", data: images });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Server failed." });
   }
 };
 
 const addImage = async (req, res) => {
   try {
-    const { groupId, imageUrl } = req.body;
+    const { eventId, imageUrl } = req.body;
     const userId = req.id;
 
-    if (!groupId || !imageUrl | !userId) {
-      return res.status(400).json({ message: "Please provide all fields" });
+    if (!eventId || !imageUrl | !userId) {
+      return res
+        .status(400)
+        .json({ message: "Invalid input. Please try again." });
     }
 
     const newImage = await Image.create({
-      group: groupId,
+      event: eventId,
       user: userId,
       imageUrl,
     });
 
-    res.status(201).json(newImage);
+    res.status(201).json({ message: "Image created.", data: newImage });
   } catch (error) {
     console.log(error);
-    res.status(500);
+    res.status(500).json({ message: "Server failed." });
   }
 };
 
 const deleteImage = async (req, res) => {
   try {
-    const { commentId: imageId } = req.body;
+    const { imageId } = req.body;
     const userId = req.id;
 
     if (!imageId || !userId) {
-      return res.status(400).json({ message: "Please provide all fields" });
+      return res
+        .status(400)
+        .json({ message: "Invalid input. Please try again." });
     }
 
     const result = await Image.deleteOne({
@@ -62,10 +66,10 @@ const deleteImage = async (req, res) => {
       .lean()
       .exec();
 
-    res.status(201).json({ count: result.deletedCount });
+    res.status(200).json({ message: "", data: { count: result.deletedCount } });
   } catch (error) {
-    console.log(error);
-    res.status(500);
+    console.error(error);
+    res.status(500).json({ message: "Server failed." });
   }
 };
 

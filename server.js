@@ -9,9 +9,15 @@ app.use(express.json());
 app.use("/auth", require("./route/auth"));
 app.use("/api", require("./route/category"));
 app.use("/api", require("./route/comment"));
-app.use("/api", require("./route/group"));
+app.use("/api", require("./route/event"));
 app.use("/api", require("./route/image"));
+app.use("/api", require("./route/payment"));
+app.use("/api", require("./route/paymentMethod"));
 app.use("/api", require("./route/registration"));
+app.use("/api", require("./route/stripe"));
+app.use("/api", require("./route/thread"));
+app.use("/api", require("./route/transaction"));
+app.use("/api", require("./route/user"));
 
 mongoose.connection.on("error", () => {
   console.log("Failed to connect to DB.");

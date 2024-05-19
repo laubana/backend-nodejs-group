@@ -7,12 +7,18 @@ const verifyToken = (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1];
-  jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, result) => {
-    if (err) return res.status(403).json({ message: "Forbidden" });
-    req.id = result.id;
-    req.email = result.email;
-    next();
-  });
+  jsonwebtoken.verify(
+    token,
+    process.env.ACCESS_TOKEN_SECRET,
+    (error, result) => {
+      if (error) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      req.id = result.id;
+      req.email = result.email;
+      next();
+    }
+  );
 };
 
 module.exports = verifyToken;

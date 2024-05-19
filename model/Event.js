@@ -1,7 +1,7 @@
 const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 
-const groupSchema = new mongoose.Schema(
+const eventSchema = new mongoose.Schema(
   {
     category: { type: ObjectId, ref: "category", required: true },
     user: { type: ObjectId, ref: "user", required: true },
@@ -12,10 +12,11 @@ const groupSchema = new mongoose.Schema(
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
     description: { type: String, required: true },
+    isActive: { type: Boolean, required: true, default: false },
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("group", groupSchema, "group");
+module.exports = mongoose.model("event", eventSchema, "event");

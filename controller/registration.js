@@ -1,15 +1,21 @@
 const mongoose = require("mongoose");
 const Registration = require("../model/Registration");
 
-const getRegistrationsGroup = async (req, res) => {
+const getRegistrationsEvent = async (req, res) => {
   try {
-    const { groupId } = req.query;
+    const { eventId } = req.query;
+
+    if (!eventId) {
+      return res
+        .status(400)
+        .json({ message: "Invalid input. Please try again." });
+    }
 
     const registrations = await Registration.find({
-      group: groupId,
+      event: eventId,
     })
       .populate({
-        path: "group",
+        path: "event",
       })
       .populate({
         path: "user",
@@ -17,23 +23,24 @@ const getRegistrationsGroup = async (req, res) => {
       .lean()
       .exec();
 
-    res.status(200).json(registrations);
+    res.status(200).json({ message: "", data: registrations });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.log(error);
+    res.status(500).json({ message: "Server failed." });
   }
 };
 
 const getRegistration = async (req, res) => {
   try {
-    const { groupId } = req.query;
+    const { eventId } = req.query;
     const userId = req.id;
 
     const registration = await Registration.findOne({
-      group: groupId,
+      event: eventId,
       user: userId,
     })
       .populate({
-        path: "group",
+        path: "event",
       })
       .populate({
         path: "user",
@@ -41,9 +48,10 @@ const getRegistration = async (req, res) => {
       .lean()
       .exec();
 
-    res.status(200).json(registration);
+    res.status(200).json({ message: "", data: registration });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.log(error);
+    res.status(500).json({ message: "Server failed." });
   }
 };
 
@@ -52,37 +60,38 @@ const addRegistration = async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
-    const { groupId } = req.body;
+    const { eventId } = req.body;
     const userId = req.id;
 
-    if (!groupId || !userId) {
-      return res.status(400).json({ message: "Please provide all fields" });
+    if (!eventId || !userId) {
+      return res
+        .status(400)
+        .json({ message: "Invalid input. Please try again." });
     }
 
     const registration = await Registration.findOne({
-      group: groupId,
+      event: eventId,
       user: userId,
     }).session(session);
 
     if (registration) {
-      return res.status(400).json({
-        message:
-          "The email address already exists, try with a different email address.",
+      return res.status(409).json({
+        message: "The registration already exists.",
       });
     }
 
     const newRegistration = await Registration.create({
-      group: groupId,
+      event: eventId,
       user: userId,
     });
 
     await session.commitTransaction();
     session.endSession();
 
-    res.status(201).json(newRegistration);
+    res.status(201).json({ message: "", data: newRegistration });
   } catch (error) {
     console.log(error);
-    res.status(500);
+    res.status(500).json({ message: "Server failed." });
   }
 };
 
@@ -92,7 +101,9 @@ const deleteRegistration = async (req, res) => {
     const userId = req.id;
 
     if (!registrationId || !userId) {
-      return res.status(400).json({ message: "Please provide all fields" });
+      return res
+        .status(400)
+        .json({ message: "Invalid input. Please try again." });
     }
 
     const result = await Registration.deleteMany({
@@ -102,15 +113,18 @@ const deleteRegistration = async (req, res) => {
       .lean()
       .exec();
 
-    res.status(201).json({ count: result.deletedCount });
+    res.status(200).json({
+      message: "Registration deleted.",
+      data: { count: result.deletedCount },
+    });
   } catch (error) {
     console.log(error);
-    res.status(500);
+    res.status(500).json({ message: "Server failed." });
   }
 };
 
 module.exports = {
-  getRegistrationsGroup,
+  getRegistrationsEvent,
   getRegistration,
   addRegistration,
   deleteRegistration,
