@@ -18,16 +18,14 @@ const signUp = async (req, res) => {
     } = req.body;
 
     if (!email || !password || !imageUrl || !name) {
-      return res
-        .status(400)
-        .json({ message: "Invalid input. Please try again." });
+      return res.status(400).json({ message: "Invalid Input" });
     }
 
-    const user = await User.findOne({ email }).lean().exec();
+    const user = await User.findOne({ email });
 
     if (user) {
       return res.status(409).json({
-        message: "The email already exists. Please try another.",
+        message: "User already exists.",
       });
     }
 
@@ -51,10 +49,13 @@ const signUp = async (req, res) => {
       customerId: customer.id,
     });
 
-    res.status(201).json({ message: "Account created.", data: newUser });
+    res
+      .status(201)
+      .json({ message: "User created successfully.", data: newUser });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Server failed." });
+
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -62,21 +63,19 @@ const signIn = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Invalid input. Please try again." });
+      return res.status(400).json({ message: "Invalid Input" });
     }
 
-    const user = await User.findOne({ email }).lean().exec();
+    const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ message: "Sign in failed." });
+      return res.status(401).json({ message: "Sign-in failed." });
     }
 
     const isMatch = bcryptjs.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Sign in failed." });
+      return res.status(401).json({ message: "Sign-in failed." });
     }
 
     const accessToken = jsonwebtoken.sign(
@@ -101,7 +100,7 @@ const signIn = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "Sign in succeeded.",
+      message: "Signed in succeeded.",
       data: {
         accessToken,
         id: user._id.toString(),
@@ -110,7 +109,8 @@ const signIn = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server failed." });
+
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -119,13 +119,13 @@ const refresh = (req, res) => {
     const cookies = req.cookies;
 
     if (!cookies?.refreshToken) {
-      return res.status(401).json({ message: "Sign in failed." });
+      return res.status(401).json({ message: "Sign-in failed." });
     }
 
     const refreshToken = cookies.refreshToken;
 
     if (!refreshToken) {
-      return res.status(401).json({ message: "Sign in failed." });
+      return res.status(401).json({ message: "Refresh failed." });
     }
 
     jsonwebtoken.verify(
@@ -133,17 +133,13 @@ const refresh = (req, res) => {
       process.env.REFRESH_TOKEN_SECRET,
       async (error, result) => {
         if (error) {
-          return res.status(401).json({ message: "Sign in failed." });
+          return res.status(401).json({ message: "Refresh failed." });
         }
 
-        const user = await User.findOne({
-          email: result.email,
-        })
-          .lean()
-          .exec();
+        const user = await User.findById(result.id);
 
         if (!user) {
-          return res.status(401).json({ message: "Sign in failed." });
+          return res.status(401).json({ message: "Refresh failed." });
         }
 
         const accessToken = jsonwebtoken.sign(
@@ -156,7 +152,7 @@ const refresh = (req, res) => {
         );
 
         res.status(200).json({
-          message: "Sign in succeeded.",
+          message: "Refreshed successfully.",
           data: {
             accessToken,
             id: user._id.toString(),
@@ -167,7 +163,8 @@ const refresh = (req, res) => {
     );
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server failed." });
+
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
@@ -198,7 +195,7 @@ const oauth = async (req, res) => {
       })
     ).data;
 
-    const user = await User.findOne({ email }).lean().exec();
+    const user = await User.findOne({ email });
 
     let userId;
 

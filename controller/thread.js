@@ -1,6 +1,19 @@
 const ObjectId = require("mongoose").Types.ObjectId;
 const Thread = require("../model/Thread");
 
+const addThread = async (req, res) => {
+  try {
+    const newThread = await Thread.create({});
+
+    res
+      .status(201)
+      .json({ message: "Thread created successfully.", data: newThread });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 const getThread = async (req, res) => {
   try {
     const { threadId } = req.query;
@@ -24,17 +37,6 @@ const getThread = async (req, res) => {
         res.status(200).json({ message: "" });
       }
     });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server failed." });
-  }
-};
-
-const addThread = async (req, res) => {
-  try {
-    const newThread = await Thread.create({});
-
-    res.status(201).json({ message: "Thread created.", data: newThread });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server failed." });

@@ -12,7 +12,6 @@ const eventSchema = new mongoose.Schema(
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
     description: { type: String, required: true },
-    isActive: { type: Boolean, required: true, default: false },
   },
   {
     timestamps: true,
