@@ -1,8 +1,9 @@
 const express = require("express");
-const router = express.Router();
-const controller = require("../controller/transaction");
 
+const controller = require("../controller/transaction");
 const verifyToken = require("../middleware/verifyToken");
+
+const router = express.Router();
 
 router.route("/transaction").post(verifyToken, controller.addTransaction);
 router

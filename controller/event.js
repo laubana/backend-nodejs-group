@@ -23,10 +23,13 @@ const addEvent = async (req, res) => {
       !latitude ||
       !longitude ||
       !name ||
-      !thumbnailUrl ||
-      !userId
+      !thumbnailUrl
     ) {
       return res.status(400).json({ message: "Invalid Input" });
+    }
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     const event = await Event.findOne({ name });
@@ -67,9 +70,13 @@ const addEvent = async (req, res) => {
 
 const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find().populate({
-      path: "category",
-    });
+    const events = await Event.find()
+      .populate({
+        path: "category",
+      })
+      .populate({
+        path: "user",
+      });
 
     res.status(200).json({ message: "", data: events });
   } catch (error) {

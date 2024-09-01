@@ -1,8 +1,62 @@
 const Image = require("../model/Image");
 
+const addImage = async (req, res) => {
+  try {
+    const { eventId, imageUrl } = req.body;
+    const userId = req.id;
+
+    if (!eventId || !imageUrl) {
+      return res.status(400).json({ message: "Invalid Input" });
+    }
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const newImage = await Image.create({
+      event: eventId,
+      user: userId,
+      imageUrl,
+    });
+
+    res
+      .status(201)
+      .json({ message: "Image created successfully.", data: newImage });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server failed." });
+  }
+};
+
+const deleteImage = async (req, res) => {
+  try {
+    const { imageId } = req.params;
+    const userId = req.id;
+
+    if (!imageId) {
+      return res.status(400).json({ message: "Invalid Input" });
+    }
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const result = await Image.deleteOne({
+      _id: imageId,
+      user: userId,
+    });
+
+    res.status(200).json({ message: "", data: result.deletedCount });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({ message: "Server Errir" });
+  }
+};
+
 const getImages = async (req, res) => {
   try {
-    const { eventId } = req.query;
+    const { eventId } = req.params;
 
     const images = await Image.find({
       event: eventId,
@@ -13,64 +67,14 @@ const getImages = async (req, res) => {
       .populate({
         path: "user",
       })
-      .sort({ createdAt: -1 })
-      .lean()
-      .exec();
+      .sort({ createdAt: -1 });
 
     res.status(200).json({ message: "", data: images });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server failed." });
+
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-const addImage = async (req, res) => {
-  try {
-    const { eventId, imageUrl } = req.body;
-    const userId = req.id;
-
-    if (!eventId || !imageUrl | !userId) {
-      return res
-        .status(400)
-        .json({ message: "Invalid input. Please try again." });
-    }
-
-    const newImage = await Image.create({
-      event: eventId,
-      user: userId,
-      imageUrl,
-    });
-
-    res.status(201).json({ message: "Image created.", data: newImage });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server failed." });
-  }
-};
-
-const deleteImage = async (req, res) => {
-  try {
-    const { imageId } = req.body;
-    const userId = req.id;
-
-    if (!imageId || !userId) {
-      return res
-        .status(400)
-        .json({ message: "Invalid input. Please try again." });
-    }
-
-    const result = await Image.deleteOne({
-      _id: imageId,
-      user: userId,
-    })
-      .lean()
-      .exec();
-
-    res.status(200).json({ message: "", data: { count: result.deletedCount } });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server failed." });
-  }
-};
-
-module.exports = { getImages, addImage, deleteImage };
+module.exports = { addImage, deleteImage, getImages };

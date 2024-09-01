@@ -45,6 +45,15 @@ const createProduct = async ({ description, name }) => {
   return stripeProduct;
 };
 
+const createRefund = async ({ chargeId }) => {
+  const stripeCharge = await stripe.refunds.create({
+    charge: chargeId,
+    reason: "requested_by_customer",
+  });
+
+  return stripeCharge;
+};
+
 const createSetupIntent = async ({ customerId }) => {
   const stripSetupIntent = await stripe.setupIntents.create({
     customer: customerId,
@@ -74,7 +83,11 @@ const getPaymentIntent = async ({ paymentIntentId }) => {
 const listPaymentMethods = async ({ customerId }) => {
   const paymentMethods = await stripe.customers.listPaymentMethods(customerId);
 
-  return paymentMethods.data;
+  return paymentMethods;
+};
+
+const removePaymentMethod = async ({ paymentMethodId }) => {
+  await stripe.paymentMethods.detach(paymentMethodId);
 };
 
 module.exports = {
@@ -83,8 +96,10 @@ module.exports = {
   createPaymentIntent,
   createPrice,
   createProduct,
+  createRefund,
   createSetupIntent,
   getCharge,
   getPaymentIntent,
   listPaymentMethods,
+  removePaymentMethod,
 };

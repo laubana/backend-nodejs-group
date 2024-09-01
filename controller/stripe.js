@@ -4,6 +4,8 @@ const {
   confirmPaymentIntent,
   createPaymentIntent,
   createSetupIntent,
+  listPaymentMethods,
+  removePaymentMethod,
 } = require("../helper/stripe");
 const User = require("../model/User");
 
@@ -12,13 +14,17 @@ const addPaymentIntent = async (req, res) => {
     const { amount, paymentMethodId } = req.body;
     const userId = req.id;
 
-    if (!amount || !userId) {
+    if (!amount) {
       return res.status(400).json({ message: "Invalid Input" });
+    }
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     const user = await User.findById(userId);
 
-    const newStripPaymentIntent = await createPaymentIntent({
+    const stripPaymentIntent = await createPaymentIntent({
       amount: +amount,
       customerId: user.customerId,
       paymentMethodId,
@@ -26,13 +32,13 @@ const addPaymentIntent = async (req, res) => {
 
     if (paymentMethodId) {
       await confirmPaymentIntent({
-        paymentIntentId: newStripPaymentIntent.id,
+        paymentIntentId: stripPaymentIntent.id,
       });
     }
 
     res.status(201).json({
       message: "Payment intent created successfully.",
-      data: newStripPaymentIntent,
+      data: stripPaymentIntent,
     });
   } catch (error) {
     console.error(error);
@@ -46,7 +52,7 @@ const addSetupIntent = async (req, res) => {
     const userId = req.id;
 
     if (!userId) {
-      return res.status(400).json({ message: "Invalid Input" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     const user = await User.findById(userId);
@@ -68,13 +74,13 @@ const addSetupIntent = async (req, res) => {
 
 const deletePaymentMethod = async (req, res) => {
   try {
-    const { paymentMethodId } = req.body;
+    const { paymentMethodId } = req.params;
 
     if (!paymentMethodId) {
       return res.status(400).json({ message: "Invalid Input" });
     }
 
-    await stripe.paymentMethods.detach(paymentMethodId);
+    await removePaymentMethod({ paymentMethodId });
 
     res.status(200).json({ message: "Payment method deleted successfully." });
   } catch (error) {
@@ -89,16 +95,14 @@ const getAllPaymentMethods = async (req, res) => {
     const userId = req.id;
 
     if (!userId) {
-      return res.status(400).json({ message: "Invalid Input" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     const user = await User.findById(userId).lean().exec();
 
     const customerId = user.customerId;
 
-    const paymentMethods = await stripe.customers.listPaymentMethods(
-      customerId
-    );
+    const paymentMethods = await listPaymentMethods({ customerId });
 
     res.status(200).json({
       message: "",
@@ -115,74 +119,9 @@ const getAllPaymentMethods = async (req, res) => {
   }
 };
 
-const test = async (req, res) => {
-  try {
-    // stripe.products
-    //   .create({
-    //     name: "Starter Subscription",
-    //     description: "$12/Month subscription",
-    //   })
-    //   .then((product) => {
-    //     stripe.prices
-    //       .create({
-    //         unit_amount: 1200,
-    //         currency: "usd",
-    //         recurring: {
-    //           interval: "month",
-    //         },
-    //         product: product.id,
-    //       })
-    //       .then((price) => {
-    //         console.log(
-    //           "Success! Here is your starter subscription product id: " +
-    //             product.id
-    //         );
-    //         console.log(
-    //           "Success! Here is your starter subscription price id: " + price.id
-    //         );
-    //       });
-    //   });
-
-    // const paymentIntent = await stripe.paymentIntents.create({
-    //   amount: 1099,
-    //   currency: "usd",
-    // });
-
-    // const paymentIntent = await stripe.paymentIntents.confirm(
-    //   "pi_3PGwEbP2UR6e6NwD04WSo8Bp",
-    //   {
-    //     payment_method: "pm_card_visa",
-    //     return_url: "https://www.example.com",
-    //   }
-    // );
-
-    // const session = await stripe.checkout.sessions.create({
-    //   line_items: [
-    //     {
-    //       price: "price_1PGvcTP2UR6e6NwDdaqdqoEW",
-    //       quantity: 1,
-    //     },
-    //   ],
-    //   mode: "subscription",
-    //   success_url: `https://gmail.com/`,
-    //   cancel_url: `https://gmail.com/`,
-    // });
-
-    const paymentMethods = await stripe.customers.listPaymentMethods(
-      "cus_Q7Sp68NqVMvPwp"
-    );
-    console.log(paymentMethods);
-
-    res.status(200);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 module.exports = {
   addPaymentIntent,
   addSetupIntent,
   deletePaymentMethod,
   getAllPaymentMethods,
-  test,
 };

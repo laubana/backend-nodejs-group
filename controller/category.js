@@ -8,9 +8,9 @@ const addCategory = async (req, res) => {
       return res.status(400).json({ message: "Invalid Input" });
     }
 
-    const category = await Category.findOne({ value });
+    const existingCategory = await Category.findOne({ value });
 
-    if (category) {
+    if (existingCategory) {
       return res.status(409).json({
         message: "Category already exists.",
       });
@@ -37,7 +37,8 @@ const getAllCategorys = async (req, res) => {
     res.status(200).json({ message: "", data: categorys });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server failed." });
+
+    res.status(500).json({ message: "Server Error" });
   }
 };
 

@@ -1,12 +1,12 @@
 const express = require("express");
-const router = express.Router();
-const controller = require("../controller/image");
 
+const controller = require("../controller/image");
 const verifyToken = require("../middleware/verifyToken");
 
-router.route("/images").get(controller.getImages);
+const router = express.Router();
 
 router.route("/image").post(verifyToken, controller.addImage);
-router.route("/image").delete(verifyToken, controller.deleteImage);
+router.route("/image/:imageId").delete(verifyToken, controller.deleteImage);
+router.route("/images/:eventId").get(controller.getImages);
 
 module.exports = router;

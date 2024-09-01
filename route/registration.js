@@ -1,15 +1,17 @@
 const express = require("express");
-const router = express.Router();
-const controller = require("../controller/registration");
 
+const controller = require("../controller/registration");
 const verifyToken = require("../middleware/verifyToken");
 
-router.route("/registrations/event").get(controller.getRegistrationsEvent);
+const router = express.Router();
 
-router.route("/registration").get(verifyToken, controller.getRegistration);
 router.route("/registration").post(verifyToken, controller.addRegistration);
 router
-  .route("/registration")
+  .route("/registration/:registrationId")
   .delete(verifyToken, controller.deleteRegistration);
+router
+  .route("/registration/:eventId")
+  .get(verifyToken, controller.getRegistration);
+router.route("/registrations/:eventId").get(controller.getRegistrations);
 
 module.exports = router;

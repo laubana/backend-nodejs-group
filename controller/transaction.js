@@ -1,6 +1,10 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
-const { getPaymentIntent, getCharge } = require("../helper/stripe");
+const {
+  getPaymentIntent,
+  getCharge,
+  createRefund,
+} = require("../helper/stripe");
 const Transaction = require("../model/Transaction");
 
 const addTransaction = async (req, res) => {
@@ -8,8 +12,12 @@ const addTransaction = async (req, res) => {
     const { description, paymentIntentId } = req.body;
     const userId = req.id;
 
-    if (!description || !paymentIntentId || !userId) {
+    if (!description || !paymentIntentId) {
       return res.status(400).json({ message: "Invalid Input" });
+    }
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     const stripePaymentIntent = await getPaymentIntent({ paymentIntentId });
@@ -17,8 +25,6 @@ const addTransaction = async (req, res) => {
     const chargeId = stripePaymentIntent.latest_charge;
 
     const stripeCharge = await getCharge({ chargeId });
-
-    console.log(stripeCharge);
 
     const newTransaction = await Transaction.create({
       amount: stripeCharge.amount,
@@ -28,12 +34,10 @@ const addTransaction = async (req, res) => {
       user: userId,
     });
 
-    res
-      .status(200)
-      .json({
-        message: "Transaction created successfully.",
-        data: newTransaction,
-      });
+    res.status(200).json({
+      message: "Transaction created successfully.",
+      data: newTransaction,
+    });
   } catch (error) {
     console.log(error);
 
@@ -46,22 +50,23 @@ const deleteTransaction = async (req, res) => {
     const { transactionId } = req.params;
     const userId = req.id;
 
-    if (!transactionId || !userId) {
+    if (!transactionId) {
       return res.status(400).json({ message: "Invalid Input" });
     }
 
-    const transaction = await Transaction.findById(transactionId).populate({
-      path: "user",
-    });
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-    const response = await stripe.refunds.create({
-      charge: transaction.chargeId,
-      reason: "requested_by_customer",
+    const existingTransaction = await Transaction.findById(transactionId);
+
+    const stripeRefund = await createRefund({
+      chargeId: existingTransaction.chargeId,
     });
 
     await Transaction.findByIdAndUpdate(
       transactionId,
-      { $inc: { amount: -response.amount } },
+      { $inc: { amount: -stripeRefund.amount } },
       { new: true }
     );
 
@@ -78,7 +83,7 @@ const getAllTransactions = async (req, res) => {
     const userId = req.id;
 
     if (!userId) {
-      return res.status(400).json({ message: "Invalid Input" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     const transactions = await Transaction.find({
