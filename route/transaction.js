@@ -1,11 +1,14 @@
 const express = require("express");
-const router = express.Router();
-const controller = require("../controller/transaction");
 
+const controller = require("../controller/transaction");
 const verifyToken = require("../middleware/verifyToken");
 
-router.route("/transactions").get(verifyToken, controller.getAllTransactions);
+const router = express.Router();
 
-router.route("/transaction").delete(verifyToken, controller.deleteTransaction);
+router.route("/transaction").post(verifyToken, controller.addTransaction);
+router
+  .route("/transaction/:transactionId")
+  .delete(verifyToken, controller.deleteTransaction);
+router.route("/transactions").get(verifyToken, controller.getAllTransactions);
 
 module.exports = router;

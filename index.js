@@ -11,12 +11,11 @@ app.use("/api", require("./route/category"));
 app.use("/api", require("./route/comment"));
 app.use("/api", require("./route/event"));
 app.use("/api", require("./route/image"));
-app.use("/api", require("./route/paymentMethod"));
 app.use("/api", require("./route/registration"));
-app.use("/api", require("./route/stripe"));
-app.use("/api", require("./route/thread"));
 app.use("/api", require("./route/transaction"));
 app.use("/api", require("./route/user"));
+app.use("/stripe", require("./route/stripe"));
+app.use("/webhook", require("./webhook/stripe"));
 
 mongoose.connection.on("error", () => {
   console.log("Failed to connect to DB.");
