@@ -1,4 +1,4 @@
-const cors = {
+const corsConfig = {
   origin: (origin, callback) => {
     if (process.env.ORIGINS.split(",").indexOf(origin) !== -1 || !origin) {
       callback(null, true);
@@ -11,4 +11,4 @@ const cors = {
   origin: true,
 };
 
-module.exports = { cors };
+module.exports = corsConfig;

@@ -1,11 +1,17 @@
-const mongoose = require("mongoose");
-const express = require("express");
-require("./config/db").db();
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const corsOptions = require("./config/cors");
+const db = require("./config/db");
+const express = require("express");
+const mongoose = require("mongoose");
+
+db();
+
 const app = express();
-app.use(require("cookie-parser")());
-app.use(cors(require("./config/cors").cors));
+app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(express.json());
+
 app.use("/auth", require("./route/auth"));
 app.use("/api", require("./route/category"));
 app.use("/api", require("./route/comment"));

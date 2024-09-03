@@ -61,7 +61,7 @@ const oauth = async (req, res) => {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: "None",
-      secure: true,
+      secure: false,
     });
   } catch (error) {
     console.log(error);
@@ -162,7 +162,7 @@ const signIn = async (req, res) => {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: "None",
-      secure: true,
+      secure: false,
     });
 
     res.status(200).json({
