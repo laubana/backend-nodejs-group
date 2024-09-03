@@ -1,7 +1,6 @@
 const axios = require("axios");
 const bcryptjs = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
-const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 const { createCustomer } = require("../helper/stripe");
 const User = require("../model/User");
@@ -59,9 +58,11 @@ const oauth = async (req, res) => {
     );
 
     res.cookie("refreshToken", refreshToken, {
-      secure: true,
-      sameSite: "None",
+      domain: process.env.DOMAIN,
+      httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: "None",
+      secure: true,
     });
   } catch (error) {
     console.log(error);
@@ -159,10 +160,11 @@ const signIn = async (req, res) => {
     );
 
     res.cookie("refreshToken", refreshToken, {
+      domain: process.env.DOMAIN,
       httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: "None",
       secure: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
