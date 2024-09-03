@@ -58,10 +58,10 @@ const oauth = async (req, res) => {
     );
 
     res.cookie("refreshToken", refreshToken, {
-      domain: process.env.DOMAIN,
+      // domain: process.env.DOMAIN,
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "None",
+      sameSite: "Strict",
       secure: true,
     });
   } catch (error) {
@@ -160,10 +160,10 @@ const signIn = async (req, res) => {
     );
 
     res.cookie("refreshToken", refreshToken, {
-      domain: process.env.DOMAIN,
+      // domain: process.env.DOMAIN,
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "None",
+      sameSite: "Strict",
       secure: true,
     });
 
