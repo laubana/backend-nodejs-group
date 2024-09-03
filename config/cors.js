@@ -8,6 +8,7 @@ const cors = {
   },
   credentials: true,
   optionsSuccessStatus: 204,
+  origin: true,
 };
 
 module.exports = { cors };
