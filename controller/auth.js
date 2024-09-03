@@ -61,7 +61,7 @@ const oauth = async (req, res) => {
       // domain: process.env.DOMAIN,
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "Strict",
+      sameSite: "Lax",
       secure: true,
     });
   } catch (error) {
@@ -163,7 +163,7 @@ const signIn = async (req, res) => {
       // domain: process.env.DOMAIN,
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "Strict",
+      sameSite: "Lax",
       secure: true,
     });
 
