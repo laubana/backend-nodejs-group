@@ -58,10 +58,9 @@ const oauth = async (req, res) => {
     );
 
     res.cookie("refreshToken", refreshToken, {
-      domain: process.env.DOMAIN,
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      // sameSite: "None",
+      sameSite: "None",
       secure: true,
     });
   } catch (error) {
