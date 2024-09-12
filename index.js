@@ -14,10 +14,14 @@ app.use(express.json());
 
 app.use("/auth", require("./route/auth"));
 app.use("/api", require("./route/category"));
-app.use("/api", require("./route/comment"));
 app.use("/api", require("./route/event"));
-app.use("/api", require("./route/image"));
-app.use("/api", require("./route/registration"));
+app.use("/api", require("./route/eventComment"));
+app.use("/api", require("./route/eventImage"));
+app.use("/api", require("./route/eventRegistration"));
+app.use("/api", require("./route/group"));
+app.use("/api", require("./route/groupComment"));
+app.use("/api", require("./route/groupImage"));
+app.use("/api", require("./route/groupRegistration"));
 app.use("/api", require("./route/transaction"));
 app.use("/api", require("./route/user"));
 app.use("/stripe", require("./route/stripe"));

@@ -1,5 +1,3 @@
-const stripe = require("stripe")(process.env.STRIPE_SECRET);
-
 const {
   confirmPaymentIntent,
   createPaymentIntent,
@@ -24,7 +22,7 @@ const addPaymentIntent = async (req, res) => {
 
     const user = await User.findById(userId);
 
-    const stripPaymentIntent = await createPaymentIntent({
+    const stripePaymentIntent = await createPaymentIntent({
       amount: +amount,
       customerId: user.customerId,
       paymentMethodId,
@@ -32,13 +30,13 @@ const addPaymentIntent = async (req, res) => {
 
     if (paymentMethodId) {
       await confirmPaymentIntent({
-        paymentIntentId: stripPaymentIntent.id,
+        paymentIntentId: stripePaymentIntent.id,
       });
     }
 
     res.status(201).json({
       message: "Payment intent created successfully.",
-      data: stripPaymentIntent,
+      data: stripePaymentIntent,
     });
   } catch (error) {
     console.error(error);

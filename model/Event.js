@@ -3,19 +3,19 @@ const mongoose = require("mongoose");
 
 const eventSchema = new mongoose.Schema(
   {
-    category: { type: ObjectId, ref: "category", required: true },
-    user: { type: ObjectId, ref: "user", required: true },
-    thumbnailUrl: { type: String, required: true },
-    imageUrl: { type: String, required: true },
-    name: { type: String, required: true, unique: true },
-    address: { type: String, required: true },
-    latitude: { type: Number, required: true },
-    longitude: { type: Number, required: true },
+    address: { type: String },
+    date: { type: Date },
     description: { type: String, required: true },
+    fee: { type: Number, required: true, default: 0 },
+    group: { type: ObjectId, ref: "Group", required: true },
+    latitude: { type: Number },
+    longitude: { type: Number },
+    name: { type: String, required: true },
+    user: { type: ObjectId, ref: "User", required: true },
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("event", eventSchema, "event");
+module.exports = mongoose.model("Event", eventSchema, "Event");

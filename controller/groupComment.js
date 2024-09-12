@@ -1,11 +1,11 @@
-const Comment = require("../model/Comment");
+const GroupComment = require("../model/GroupComment");
 
-const addComment = async (req, res) => {
+const addGroupComment = async (req, res) => {
   try {
-    const { eventId, value } = req.body;
+    const { groupId, value } = req.body;
     const userId = req.id;
 
-    if (!eventId || !value) {
+    if (!groupId || !value) {
       return res.status(400).json({ message: "Invalid Input" });
     }
 
@@ -13,15 +13,16 @@ const addComment = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const newComment = await Comment.create({
-      event: eventId,
+    const newGroupComment = await GroupComment.create({
+      group: groupId,
       user: userId,
       value,
     });
 
-    res
-      .status(201)
-      .json({ message: "Comment created successfully.", data: newComment });
+    res.status(201).json({
+      message: "Group comment created successfully.",
+      data: newGroupComment,
+    });
   } catch (error) {
     console.log(error);
 
@@ -29,12 +30,12 @@ const addComment = async (req, res) => {
   }
 };
 
-const deleteComment = async (req, res) => {
+const deleteGroupComment = async (req, res) => {
   try {
-    const { commentId } = req.params;
+    const { commentId: groupCommentId } = req.params;
     const userId = req.id;
 
-    if (!commentId) {
+    if (!groupCommentId) {
       return res.status(400).json({ message: "Invalid Input" });
     }
 
@@ -42,13 +43,13 @@ const deleteComment = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const deleteResult = await Comment.deleteOne({
-      _id: commentId,
+    const deleteResult = await GroupComment.deleteOne({
+      _id: groupCommentId,
       user: userId,
     });
 
     res.status(200).json({
-      message: "Comment deleted successfully.",
+      message: "Group comment deleted successfully.",
       data: deleteResult.deletedCount,
     });
   } catch (error) {
@@ -58,26 +59,26 @@ const deleteComment = async (req, res) => {
   }
 };
 
-const getComments = async (req, res) => {
+const getGroupComments = async (req, res) => {
   try {
-    const { eventId } = req.params;
+    const { groupId } = req.params;
 
-    if (!eventId) {
+    if (!groupId) {
       return res.status(400).json({ message: "Invalid Input" });
     }
 
-    const comments = await Comment.find({
-      event: eventId,
+    const groupComments = await GroupComment.find({
+      group: groupId,
     })
       .populate({
-        path: "event",
+        path: "group",
       })
       .populate({
         path: "user",
       })
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ message: "", data: comments });
+    res.status(200).json({ message: "", data: groupComments });
   } catch (error) {
     console.error(error);
 
@@ -86,7 +87,7 @@ const getComments = async (req, res) => {
 };
 
 module.exports = {
-  addComment,
-  deleteComment,
-  getComments,
+  addGroupComment,
+  deleteGroupComment,
+  getGroupComments,
 };

@@ -1,6 +1,6 @@
-const Image = require("../model/Image");
+const EventImage = require("../model/EventImage");
 
-const addImage = async (req, res) => {
+const addEventImage = async (req, res) => {
   try {
     const { eventId, imageUrl } = req.body;
     const userId = req.id;
@@ -13,27 +13,29 @@ const addImage = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const newImage = await Image.create({
+    const newEventImage = await EventImage.create({
       event: eventId,
       user: userId,
       imageUrl,
     });
 
-    res
-      .status(201)
-      .json({ message: "Image created successfully.", data: newImage });
+    res.status(201).json({
+      message: "Event image created successfully.",
+      data: newEventImage,
+    });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Server failed." });
+
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-const deleteImage = async (req, res) => {
+const deleteEventImage = async (req, res) => {
   try {
-    const { imageId } = req.params;
+    const { eventImageId } = req.params;
     const userId = req.id;
 
-    if (!imageId) {
+    if (!eventImageId) {
       return res.status(400).json({ message: "Invalid Input" });
     }
 
@@ -41,24 +43,24 @@ const deleteImage = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const result = await Image.deleteOne({
-      _id: imageId,
+    const deleteResult = await EventImage.deleteOne({
+      _id: eventImageId,
       user: userId,
     });
 
-    res.status(200).json({ message: "", data: result.deletedCount });
+    res.status(200).json({ message: "", data: deleteResult.deletedCount });
   } catch (error) {
     console.error(error);
 
-    res.status(500).json({ message: "Server Errir" });
+    res.status(500).json({ message: "Server Error" });
   }
 };
 
-const getImages = async (req, res) => {
+const getEventImages = async (req, res) => {
   try {
     const { eventId } = req.params;
 
-    const images = await Image.find({
+    const eventImages = await EventImage.find({
       event: eventId,
     })
       .populate({
@@ -69,7 +71,7 @@ const getImages = async (req, res) => {
       })
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ message: "", data: images });
+    res.status(200).json({ message: "", data: eventImages });
   } catch (error) {
     console.error(error);
 
@@ -77,4 +79,8 @@ const getImages = async (req, res) => {
   }
 };
 
-module.exports = { addImage, deleteImage, getImages };
+module.exports = {
+  addEventImage,
+  deleteEventImage,
+  getEventImages,
+};

@@ -7,7 +7,7 @@ const transactionSchema = new mongoose.Schema(
     chargeId: { type: String, required: true },
     description: { type: String, required: true },
     receiptUrl: { type: String, required: true },
-    user: { type: ObjectId, ref: "user", required: true },
+    user: { type: ObjectId, ref: "User", required: true },
   },
   {
     timestamps: true,
@@ -15,7 +15,7 @@ const transactionSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model(
-  "transaction",
+  "Transaction",
   transactionSchema,
-  "transaction"
+  "Transaction"
 );

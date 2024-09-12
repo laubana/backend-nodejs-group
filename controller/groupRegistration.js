@@ -1,16 +1,16 @@
 const mongoose = require("mongoose");
 
-const Registration = require("../model/Registration");
+const GroupRegistration = require("../model/GroupRegistration");
 
-const addRegistration = async (req, res) => {
+const addGroupRegistration = async (req, res) => {
   try {
     const session = await mongoose.startSession();
     session.startTransaction();
 
-    const { eventId } = req.body;
+    const { groupId } = req.body;
     const userId = req.id;
 
-    if (!eventId) {
+    if (!groupId) {
       return res.status(400).json({ message: "Invalid Input" });
     }
 
@@ -18,19 +18,19 @@ const addRegistration = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const existingRegistration = await Registration.findOne({
-      event: eventId,
+    const existingGroupRegistration = await GroupRegistration.findOne({
+      group: groupId,
       user: userId,
     }).session(session);
 
-    if (existingRegistration) {
+    if (existingGroupRegistration) {
       return res.status(409).json({
-        message: "Registration already exists.",
+        message: "Group registration already exists.",
       });
     }
 
-    const newRegistration = await Registration.create({
-      event: eventId,
+    const newGroupRegistration = await GroupRegistration.create({
+      group: groupId,
       user: userId,
     });
 
@@ -38,8 +38,8 @@ const addRegistration = async (req, res) => {
     session.endSession();
 
     res.status(201).json({
-      message: "Registration created successfully.",
-      data: newRegistration,
+      message: "Group registration created successfully.",
+      data: newGroupRegistration,
     });
   } catch (error) {
     console.log(error);
@@ -48,12 +48,12 @@ const addRegistration = async (req, res) => {
   }
 };
 
-const deleteRegistration = async (req, res) => {
+const deleteGroupRegistration = async (req, res) => {
   try {
-    const { registrationId } = req.params;
+    const { groupRegistrationId } = req.params;
     const userId = req.id;
 
-    if (!registrationId) {
+    if (!groupRegistrationId) {
       return res.status(400).json({ message: "Invalid Input" });
     }
 
@@ -61,14 +61,14 @@ const deleteRegistration = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const result = await Registration.deleteMany({
-      _id: registrationId,
+    const deleteResult = await GroupRegistration.deleteMany({
+      _id: groupRegistrationId,
       user: userId,
     });
 
     res.status(200).json({
-      message: "Registration deleted successfully.",
-      data: result.deletedCount,
+      message: "Group registration deleted successfully.",
+      data: deleteResult.deletedCount,
     });
   } catch (error) {
     console.log(error);
@@ -77,61 +77,63 @@ const deleteRegistration = async (req, res) => {
   }
 };
 
-const getRegistration = async (req, res) => {
+const getGroupRegistration = async (req, res) => {
   try {
-    const { eventId } = req.params;
+    const { groupId } = req.params;
     const userId = req.id;
 
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const registration = await Registration.findOne({
-      event: eventId,
+    const groupRegistration = await GroupRegistration.findOne({
+      group: groupId,
       user: userId,
     })
       .populate({
-        path: "event",
+        path: "group",
       })
       .populate({
         path: "user",
       });
 
-    res.status(200).json({ message: "", data: registration });
+    res.status(200).json({ message: "", data: groupRegistration });
   } catch (error) {
     console.log(error);
+
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-const getRegistrations = async (req, res) => {
+const getGroupRegistrations = async (req, res) => {
   try {
-    const { eventId } = req.params;
+    const { groupId } = req.params;
 
-    if (!eventId) {
+    if (!groupId) {
       return res.status(400).json({ message: "Invalid Input" });
     }
 
-    const registrations = await Registration.find({
-      event: eventId,
+    const groupRegistrations = await GroupRegistration.find({
+      group: groupId,
     })
       .populate({
-        path: "event",
+        path: "group",
       })
       .populate({
         path: "user",
       });
 
-    res.status(200).json({ message: "", data: registrations });
+    res.status(200).json({ message: "", data: groupRegistrations });
   } catch (error) {
     console.log(error);
+
     res.status(500).json({ message: "Server Error" });
   }
 };
 
 module.exports = {
-  addRegistration,
-  deleteRegistration,
-  getRegistration,
-  getRegistrations,
+  addGroupRegistration,
+  deleteGroupRegistration,
+  getGroupRegistration,
+  getGroupRegistrations,
 };
