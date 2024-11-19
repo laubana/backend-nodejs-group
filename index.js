@@ -2,6 +2,10 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const corsOptions = require("./config/cors");
 const db = require("./config/db");
+require("dotenv").config();
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+});
 const express = require("express");
 const mongoose = require("mongoose");
 
@@ -25,7 +29,6 @@ app.use("/api", require("./route/groupRegistration"));
 app.use("/api", require("./route/transaction"));
 app.use("/api", require("./route/user"));
 app.use("/stripe", require("./route/stripe"));
-app.use("/webhook", require("./webhook/stripe"));
 
 mongoose.connection.on("error", () => {
   console.log("Failed to connect to DB.");
