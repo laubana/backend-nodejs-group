@@ -28,6 +28,7 @@ app.use("/api", require("./route/groupImage"));
 app.use("/api", require("./route/groupRegistration"));
 app.use("/api", require("./route/transaction"));
 app.use("/api", require("./route/user"));
+app.use("/s3", require("./route/s3"));
 app.use("/stripe", require("./route/stripe"));
 
 mongoose.connection.on("error", () => {
