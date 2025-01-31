@@ -1,4 +1,4 @@
-# Node.js Backend
+# Node.js Back-end
 
 ## Available Scripts
 
