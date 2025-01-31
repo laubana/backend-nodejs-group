@@ -21,7 +21,7 @@ const uploadFile = async (props) => {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: `group/${directory}/${filename}`,
     Body: Buffer.from(bufferedFile),
-    ContentType: file.type,
+    ContentType: file.mimetype,
   };
 
   const command = new PutObjectCommand(params);
