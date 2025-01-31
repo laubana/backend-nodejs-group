@@ -12,4 +12,6 @@ const groupImageSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("GroupImage", groupImageSchema, "GroupImage");
+module.exports =
+  mongoose.models["GroupImage"] ||
+  mongoose.model("GroupImage", groupImageSchema);

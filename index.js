@@ -1,7 +1,7 @@
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const corsOptions = require("./config/cors");
-const db = require("./config/db");
+const connect = require("./config/db");
 require("dotenv").config();
 require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`,
@@ -9,7 +9,7 @@ require("dotenv").config({
 const express = require("express");
 const mongoose = require("mongoose");
 
-db();
+connect();
 
 const app = express();
 app.use(cors(corsOptions));

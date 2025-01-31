@@ -12,8 +12,6 @@ const eventCommentSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model(
-  "EventComment",
-  eventCommentSchema,
-  "EventComment"
-);
+module.exports =
+  mongoose.models["EventComment"] ||
+  mongoose.model("EventComment", eventCommentSchema);

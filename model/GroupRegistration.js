@@ -11,8 +11,6 @@ const groupRegistrationSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model(
-  "GroupRegistration",
-  groupRegistrationSchema,
-  "GroupRegistration"
-);
+module.exports =
+  mongoose.models["GroupRegistration"] ||
+  mongoose.model("GroupRegistration", groupRegistrationSchema);

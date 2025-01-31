@@ -12,8 +12,6 @@ const groupCommentSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model(
-  "GroupComment",
-  groupCommentSchema,
-  "GroupComment"
-);
+module.exports =
+  mongoose.models["GroupComment"] ||
+  mongoose.model("GroupComment", groupCommentSchema);

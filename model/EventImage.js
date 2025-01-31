@@ -12,4 +12,6 @@ const eventImageSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("EventImage", eventImageSchema, "EventImage");
+module.exports =
+  mongoose.models["EventImage"] ||
+  mongoose.model("EventImage", eventImageSchema);

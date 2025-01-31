@@ -19,7 +19,7 @@ const uploadFile = async (props) => {
 
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `event/${directory}/${filename}`,
+    Key: `group/${directory}/${filename}`,
     Body: Buffer.from(bufferedFile),
     ContentType: file.type,
   };
@@ -27,7 +27,7 @@ const uploadFile = async (props) => {
   const command = new PutObjectCommand(params);
   await s3.send(command);
 
-  return `${process.env.AWS_URL}/event/${directory}/${filename}`;
+  return `${process.env.AWS_URL}/group/${directory}/${filename}`;
 };
 
 module.exports = { uploadFile };

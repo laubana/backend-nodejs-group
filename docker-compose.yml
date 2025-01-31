@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    image: backend-nodejs-event-dev
+    image: backend-nodejs-group-dev
     ports:
       - 4000:4000
     volumes:
@@ -15,7 +15,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    image: backend-nodejs-event-prod
+    image: backend-nodejs-group-prod
     env_file:
       - .env
       - .env.production
