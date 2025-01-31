@@ -1,4 +1,4 @@
-# Back-end for the Event project
+# Node.js Backend
 
 ## Available Scripts
 
