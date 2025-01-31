@@ -8,6 +8,7 @@ require("dotenv").config({
 });
 const express = require("express");
 const mongoose = require("mongoose");
+const { join } = require("path");
 
 connect();
 
@@ -16,6 +17,7 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 
+app.use("/", express.static(join(__dirname, "public")));
 app.use("/auth", require("./route/auth"));
 app.use("/api", require("./route/category"));
 app.use("/api", require("./route/event"));
@@ -31,12 +33,8 @@ app.use("/api", require("./route/user"));
 app.use("/s3", require("./route/s3"));
 app.use("/stripe", require("./route/stripe"));
 
-mongoose.connection.on("error", () => {
-  console.log("Failed to connect to DB.");
-});
-
 mongoose.connection.once("open", () => {
   app.listen(process.env.PORT, () => {
-    console.log(`PORT : ${process.env.PORT}`);
+    console.log(`Server launched at port ${process.env.PORT} 🚀`);
   });
 });
