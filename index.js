@@ -1,23 +1,26 @@
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const corsOptions = require("./config/cors");
-const connect = require("./config/db");
-require("dotenv").config();
-require("dotenv").config({
-  path: `.env.${process.env.NODE_ENV}`,
-});
+const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
-const { join } = require("path");
+const path = require("path");
 
-connect();
+const corsConfig = require("./config/corsConfig");
+const dbConfig = require("./config/dbConfig");
+
+dotenv.config();
+dotenv.config({
+  path: `.env.${process.env.NODE_ENV}`,
+});
+
+dbConfig.connect();
 
 const app = express();
-app.use(cors(corsOptions));
+app.use(cors(corsConfig.corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 
-app.use("/", express.static(join(__dirname, "public")));
+app.use("/", express.static(path.join(__dirname, "public")));
 app.use("/auth", require("./route/auth"));
 app.use("/api", require("./route/category"));
 app.use("/api", require("./route/event"));
